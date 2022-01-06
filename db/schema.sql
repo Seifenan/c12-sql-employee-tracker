@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS etrackerDB;
+CREATE DATABASE etrackerDB;
+USE etrackerDB;
