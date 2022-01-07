@@ -1,5 +1,6 @@
 INSERT INTO department (name)
 VALUES 
+  ('Management'),
   ('Marketing'),
   ('Sales'),
   ('Legal'),
@@ -7,15 +8,15 @@ VALUES
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-  ('CEO', 170000, NULL),
-  ('Marketing Manager', 130000, 1),
-  ('Marketing Assistant', 80000, 1),
-  ('Sales Manager', 110000, 2),
-  ('Sales Assistant', 75000, 2),
-  ('Legal Manager', 120000, 3),
-  ('Legal Assistant', 75000, 3),
-  ('HR Manager', 100000, 4),
-  ('HR Assistant', 70000, 4);
+  ('CEO', 170000, 1),
+  ('Marketing Manager', 130000, 2),
+  ('Marketing Assistant', 80000, 2),
+  ('Sales Manager', 110000, 3),
+  ('Sales Assistant', 75000, 3),
+  ('Legal Manager', 120000, 4),
+  ('Legal Assistant', 75000, 4),
+  ('HR Manager', 100000, 5),
+  ('HR Assistant', 70000, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
