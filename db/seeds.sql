@@ -7,7 +7,7 @@ VALUES
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-  ('CEO', 170000, 1),
+  ('CEO', 170000, NULL),
   ('Marketing Manager', 130000, 1),
   ('Marketing Assistant', 80000, 1),
   ('Sales Manager', 110000, 2),
@@ -24,9 +24,9 @@ VALUES
   ('Virginia', 'Woolf', 3, 2),
   ('Piers', 'Gaveston', 3, 2),
   ('Charles', 'LeRoi', 4, 1),
-  ('Katherine', 'Mansfield', 5, 3),
-  ('Unica', 'Zurn', 5, 3),
+  ('Katherine', 'Mansfield', 5, 5),
+  ('Unica', 'Zurn', 5, 5),
   ('Dora', 'Carrington', 6, 1),
-  ('Edward', 'Bellamy', 7, 4),
+  ('Edward', 'Bellamy', 7, 8),
   ('Montague', 'Summers', 8, 1),
-  ('Octavia', 'Butler', 9, 5);
+  ('Octavia', 'Butler', 9, 10);
