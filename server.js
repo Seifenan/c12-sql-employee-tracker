@@ -26,6 +26,8 @@ function startApp() {
         "Add new Employee?",
         "Update Employee?",
         "Remove Employee?",
+        "Remove Role?",
+        "Remove Department?",
         "Exit"
       ]
     }
@@ -63,6 +65,14 @@ function startApp() {
         removeEmployee();
         break;
 
+      case "Remove Role?":
+        removeRole();
+        break;
+
+      case "Remove Department?":
+        removeDepartment();
+        break;
+
       case "Exit":
         db.end();
         break;
@@ -79,6 +89,17 @@ function viewDepartments() {
     })
 }
 
+var dArr = [];
+function selectDepartment() {
+  db.query("SELECT id, name FROM department", function (err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      dArr.push(res[i].id);
+    }
+  })
+  return dArr;
+}
+
 function viewRoles() {
   db.query("SELECT role.id AS Role_ID, role.title AS Job_Title, role.salary AS Salary, department.name as Department FROM role JOIN department ON role.department_id = department.id;",
     function (err, res) {
@@ -88,6 +109,17 @@ function viewRoles() {
     })
 }
 
+var rArr = [];
+function selectRole() {
+  db.query("SELECT id FROM role order by id", function (err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      rArr.push(res[i].id);
+    }
+  })
+  return rArr;
+}
+
 function viewEmployees() {
   db.query("SELECT employee.id AS Employee_ID, employee.first_name AS First_Name, employee.last_name AS Last_Name, role.title AS Job_Title, department.name AS Department, role.salary AS Salary, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;",
     function (err, res) {
@@ -95,6 +127,17 @@ function viewEmployees() {
       console.table(res)
       startApp()
     })
+}
+
+var eArr = [];
+function selectEmployee() {
+  db.query("SELECT id FROM employee order by id", function (err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      eArr.push(res[i].id);
+    }
+  })
+  return eArr;
 }
 
 function addDepartment() {
@@ -113,7 +156,7 @@ function addDepartment() {
       function (err) {
         if (err) throw err
         console.table(res);
-        startApp();
+        viewDepartments();
       }
     )
   })
@@ -149,7 +192,7 @@ function addRole() {
         function (err) {
           if (err) throw err
           console.table(res);
-          startApp();
+          viewRoles();
         }
       )
     });
@@ -160,12 +203,12 @@ function addEmployee() {
   db.query("SELECT * from employee", function (err, res) {
     inquirer.prompt([
       {
-        name: "firstname",
+        name: "firstName",
         type: "input",
         message: "Enter employee's first name!"
       },
       {
-        name: "lastname",
+        name: "lastName",
         type: "input",
         message: "Enter employee's last name!"
       },
@@ -184,15 +227,15 @@ function addEmployee() {
     ]).then(function (res) {
       db.query("INSERT INTO employee SET ?",
         {
-          first_name: res.firstname,
-          last_name: res.lastname,
-          manager_id: res.manager,
-          role_id: res.role
+          first_name: res.firstName,
+          last_name: res.lastName,
+          role_id: res.role,
+          manager_id: res.manager
         },
         function (err) {
           if (err) throw err
           console.table(res);
-          startApp();
+          viewEmployees();
         }
       )
     });
@@ -217,41 +260,41 @@ function updateEmployee() {
       }
     ]).then(function (res) {
       // Modify >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      db.query('UPDATE employee SET role_id = ? WHERE id = :Employee_ID',
-        {
-          Employee_ID: res.employee,
+      db.query('UPDATE employee SET ? WHERE id = ?',
+        [{
           role_id: res.role
         },
+        {
+          id: res.employee
+        }],
         function (err) {
           if (err) throw err
           console.table(res);
-          startApp();
+          viewEmployees();
         }
       )
     });
   });
 }
 
-// removeEmployee function error >>>>>>>>>>>>>>>>>>
 function removeEmployee() {
   db.query("SELECT * from employee", function (err, res) {
     inquirer.prompt([
       {
         name: "employee",
         type: "list",
-        message: "Select an employee to delete by selecting their employee_ID!",
+        message: "Select an employee to delete by selecting their employee ID!",
         choices: selectEmployee()
       }
     ]).then(function (res) {
       db.query('DELETE FROM employee WHERE ?',
         {
-          // Modify >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-          Employee_ID: res.employee
+          id: res.employee
         },
         function (err) {
           if (err) throw err
           console.table(res);
-          startApp();
+          viewEmployees();
         }
       )
     });
@@ -259,44 +302,51 @@ function removeEmployee() {
 }
 
 function removeRole() {
-
+  db.query("SELECT * from role", function (err, res) {
+    inquirer.prompt([
+      {
+        name: "role",
+        type: "list",
+        message: "Select a role to delete by selecting the associated Role ID!",
+        choices: selectRole()
+      }
+    ]).then(function (res) {
+      db.query('DELETE FROM role WHERE ?',
+        {
+          id: res.role
+        },
+        function (err) {
+          if (err) throw err
+          console.table(res);
+          viewRoles();
+        }
+      )
+    });
+  });
 }
 
 function removeDepartment() {
-
-}
-
-var rArr = [];
-function selectRole() {
-  db.query("SELECT id FROM role order by id", function (err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      rArr.push(res[i].id);
-    }
-  })
-  return rArr;
-}
-
-var dArr = [];
-function selectDepartment() {
-  db.query("SELECT id, name FROM department", function (err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      dArr.push(res[i].id);
-    }
-  })
-  return dArr;
-}
-
-var eArr = [];
-function selectEmployee() {
-  db.query("SELECT id FROM employee order by id", function (err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      eArr.push(res[i].id);
-    }
-  })
-  return eArr;
+  db.query("SELECT * from department", function (err, res) {
+    inquirer.prompt([
+      {
+        name: "department",
+        type: "list",
+        message: "Select a department to delete by selecting the Department ID!",
+        choices: selectDepartment()
+      }
+    ]).then(function (res) {
+      db.query('DELETE FROM department WHERE ?',
+        {
+          id: res.department
+        },
+        function (err) {
+          if (err) throw err
+          console.table(res);
+          viewDepartments();
+        }
+      )
+    });
+  });
 }
 
 // Start server after DB connection
