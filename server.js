@@ -242,7 +242,6 @@ function addEmployee() {
   });
 }
 
-// updateEmployee function error >>>>>>>>>>>>>>>>>>
 function updateEmployee() {
   db.query("SELECT * from employee", function (err, res) {
     inquirer.prompt([
@@ -259,14 +258,8 @@ function updateEmployee() {
         choices: selectRole()
       }
     ]).then(function (res) {
-      // Modify >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      db.query('UPDATE employee SET ? WHERE id = ?',
-        [{
-          role_id: res.role
-        },
-        {
-          id: res.employee
-        }],
+      db.query('UPDATE employee SET role_id = ? WHERE id = ?',
+        [res.role, res.employee],
         function (err) {
           if (err) throw err
           console.table(res);
@@ -349,7 +342,6 @@ function removeDepartment() {
   });
 }
 
-// Start server after DB connection
 db.connect(err => {
   if (err) throw err;
   console.log('Database connected! Thread_ID: ' + db.threadId);
